@@ -16,7 +16,6 @@ public class GameButton : MonoBehaviour
     public Transform startTrans;
     public bool isFirstNum,isSecondNum,isThirdNum,isFourthNum,isAnyNum = false;
     public EmptySlotManager emptySlotManager;
-    //public GameButton topBtn, bottomBtn, leftBtn, rightBtn, topTopBtn, bottomBottomBtn, leftLeftBtn, rightRightBtn;
     public GameObject gameModeScript;
     public TMP_Text buttonText;
 
@@ -78,48 +77,11 @@ public class GameButton : MonoBehaviour
             isFourthNum = true;
             isAnyNum = true;
         }
-        //switch(randomNumber)
-        //{
-        //    case 1:
-        //        GetComponent<Image>().sprite = sprite1;
-        //        break;
-        //    case 2:
-        //        GetComponent<Image>().sprite = sprite2;
-        //        break;
-        //    case 3:
-        //        GetComponent<Image>().sprite = sprite3;
-        //        break;
-        //    case 4:
-        //        GetComponent<Image>().sprite = sprite4;
-        //        break;
-        //    case 5:
-        //        if(minigameManager.boneCount < 3)
-        //        {
-        //            GetComponent<Image>().sprite = boneSprite;
-        //            minigameManager.boneCount++;
-        //        }
-        //        else
-        //        {
-        //            randomNumber = Random.Range(1, numOfTypes + 1);
-        //            SetButtonSprite();
-        //        }
-        //        break;
-        //    case 6:
-        //        GetComponent<Image>().sprite = sprite5;
-        //        break;
-        //    case 7:
-        //        if(minigameManager.obstacleCount < 3)
-        //        {
-        //            GetComponent<Image>().sprite = obstacleSprite;
-        //            minigameManager.obstacleCount++;
-        //        }
-        //        else
-        //        {
-        //            randomNumber = Random.Range(1, numOfTypes + 1);
-        //            SetButtonSprite();
-        //        }
-        //        break;
-        //}
+
     }
 
+    public void ButtonClicked()
+    {
+        minigameManager.ButtonPressed(randomNumber);
+    }
 }

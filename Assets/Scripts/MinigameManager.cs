@@ -26,13 +26,16 @@ public class MinigameManager : MonoBehaviour
     public TMP_Text codeText;
     public TMP_Text timerText;
     public TMP_Text endText;
-    public Slider scoreSlider;
     public GameObject endScreen;
     public GameObject minigameScreen;
     public GameObject curGameMode;
+    public Image firstNumImage, secondNumImage, thirdNumImage, fourthNumImage,firstTryImage,secondTryImage,thirdTryImage,fourthTryImage;
+    public Sprite correctSprite, wrongSprite;
 
     private int Score=0;
+    private int Lives = 4;
     private int maxScore = 500;
+    private int currentNumber;
     private float timeLeft =60;
     private bool firstNumSet, secondNumSet, thirdNumSet, fourthNumSet = false;
     private AudioSource audioSource;
@@ -42,6 +45,7 @@ public class MinigameManager : MonoBehaviour
         secondNum = Random.Range(0, 99);
         thirdNum = Random.Range(0, 99);
         fourthNum = Random.Range(0, 99);
+        currentNumber = firstNum;
 
         Time.timeScale = 1;
         audioSource = GetComponent<AudioSource>();
@@ -80,7 +84,6 @@ public class MinigameManager : MonoBehaviour
         //    timeLeft = 80;
         //    maxScore = 750;
         //}
-        scoreSlider.maxValue = maxScore;
         codeText.text = ("Code: " + firstNum + " " + secondNum + " " + thirdNum + " " + fourthNum);
         CheckForCode();
     }
@@ -199,7 +202,6 @@ public class MinigameManager : MonoBehaviour
         }
         scoreText.text = ("Score: " + Score);
         timerText.text = ("Time Remaining: " + timeLeft.ToString("F0"));
-        scoreSlider.value = Score;
 
         //gameMode = curGameMode.GetComponent<GameModeScript>().currentGameMode;
 
@@ -226,4 +228,50 @@ public class MinigameManager : MonoBehaviour
         curGameMode.GetComponent<GameModeScript>().OnHardPressed();
     }
 
+    public void ButtonPressed(int value)
+    {
+        Debug.Log("ayo");
+        if (value == currentNumber)
+        {
+            if (currentNumber == firstNum)
+            {
+                firstNumImage.sprite = correctSprite;
+                currentNumber = secondNum;
+            }
+            else if (currentNumber == secondNum)
+            {
+                secondNumImage.sprite = correctSprite;
+                currentNumber = thirdNum;
+            }
+            else if (currentNumber == thirdNum)
+            {
+                thirdNumImage.sprite = correctSprite;
+                currentNumber = fourthNum;
+            }
+            else if (currentNumber == fourthNum)
+            {
+                fourthNumImage.sprite = correctSprite;
+            }
+        }
+        else
+        {
+            if (Lives == 4)
+            {
+                firstTryImage.sprite = wrongSprite;
+            }
+            else if (Lives == 3)
+            {
+                secondTryImage.sprite = wrongSprite;
+            }
+            else if (Lives == 2)
+            {
+                thirdTryImage.sprite = wrongSprite;
+            }
+            else if (Lives == 1)
+            {
+                fourthTryImage.sprite = wrongSprite;
+            }
+            Lives--;
+        }
+    }
 }
