@@ -7,9 +7,11 @@ using UnityEngine.SceneManagement;
 public class GameModeScript : MonoBehaviour
 {
     public int currentGameMode;
+    public int playerSkill;
     private void Awake()
     {
         DontDestroyOnLoad(transform.gameObject);
+        playerSkill = 5;
     }
 
     public void OnEasyPressed()

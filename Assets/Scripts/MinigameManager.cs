@@ -8,11 +8,11 @@ public class MinigameManager : MonoBehaviour
 {
     [SerializeField]
     private GameButton gameButton;
-    private int tempSpriteNumber;
     [SerializeField]
     private Canvas canvas;
     [SerializeField]
     private Transform startTransform;
+    [SerializeField]
     private int gridSize = 6;
     [SerializeField]
     private List<GameButton> buttonList;
@@ -23,9 +23,12 @@ public class MinigameManager : MonoBehaviour
     public int thirdNum;
     public int fourthNum;
     public TMP_Text scoreText;
+    public TMP_Text difficultyText;
     public TMP_Text codeText;
+    public TMP_Text gameText;
     public TMP_Text timerText;
     public TMP_Text endText;
+    public TMP_Text skillText;
     public GameObject endScreen;
     public GameObject minigameScreen;
     public GameObject curGameMode;
@@ -34,7 +37,7 @@ public class MinigameManager : MonoBehaviour
 
     private int Score=0;
     private int Lives = 4;
-    private int maxScore = 500;
+    private int playerCurrentSkill;
     private int currentNumber;
     private float timeLeft =60;
     private bool firstNumSet, secondNumSet, thirdNumSet, fourthNumSet = false;
@@ -52,7 +55,7 @@ public class MinigameManager : MonoBehaviour
         buttonList = new List<GameButton>();
         curGameMode = GameObject.FindGameObjectWithTag("GameMode");
         Vector3 tempPos = startTransform.position;
-
+        playerCurrentSkill = curGameMode.GetComponent<GameModeScript>().playerSkill;
         for (int row = 0; row < gridSize; row++)
         {
             for (int column = 0; column < gridSize; column++)
@@ -69,22 +72,29 @@ public class MinigameManager : MonoBehaviour
 
         }
 
-        //if (curGameMode.GetComponent<GameModeScript>().currentGameMode == 1)
-        //{
-        //    timeLeft = 45;
-        //    maxScore = 1000;
-        //}
-        //else if (curGameMode.GetComponent<GameModeScript>().currentGameMode == 2)
-        //{
-        //    timeLeft = 60;
-        //    maxScore = 1000;
-        //}
-        //else if (curGameMode.GetComponent<GameModeScript>().currentGameMode == 3)
-        //{
-        //    timeLeft = 80;
-        //    maxScore = 750;
-        //}
+        if (curGameMode.GetComponent<GameModeScript>().currentGameMode == 1)
+        {
+            timeLeft = 45;
+            Lives = 4;
+            difficultyText.text = ("Difficulty: Easy");
+        }
+        else if (curGameMode.GetComponent<GameModeScript>().currentGameMode == 2)
+        {
+            timeLeft = 60;
+            Lives = 3;
+            fourthTryImage.gameObject.SetActive(false);
+            difficultyText.text = ("Difficulty: Medium");
+        }
+        else if (curGameMode.GetComponent<GameModeScript>().currentGameMode == 3)
+        {
+            timeLeft = 80;
+            Lives = 2;
+            thirdTryImage.gameObject.SetActive(false);
+            fourthTryImage.gameObject.SetActive(false);
+            difficultyText.text = ("Difficulty: Hard");
+        }
         codeText.text = ("Code: " + firstNum + " " + secondNum + " " + thirdNum + " " + fourthNum);
+        skillText.text = ("Player Level: " + playerCurrentSkill);
         CheckForCode();
     }
 
@@ -195,26 +205,40 @@ public class MinigameManager : MonoBehaviour
         else
         {
             Time.timeScale = 0;
-            //curGameMode.GetComponent<GameModeScript>().currentGameMode = 1;
+            curGameMode.GetComponent<GameModeScript>().currentGameMode = 1;
+            endScreen.SetActive(true);
+            minigameScreen.SetActive(false);
+            endText.text = ("You Lose!");
+        }
+        timerText.text = ("Time Remaining: " + timeLeft.ToString("F0"));
+
+        gameMode = curGameMode.GetComponent<GameModeScript>().currentGameMode;
+
+        if (Lives < 1)
+        {
+            Time.timeScale = 0;
+            curGameMode.GetComponent<GameModeScript>().currentGameMode = 1;
             endScreen.SetActive(true);
             minigameScreen.SetActive(false);
             endText.text = ("You Lose! End Score: " + Score);
         }
-        scoreText.text = ("Score: " + Score);
-        timerText.text = ("Time Remaining: " + timeLeft.ToString("F0"));
 
-        //gameMode = curGameMode.GetComponent<GameModeScript>().currentGameMode;
-
-        if(Score >= maxScore)
-        {
-            Time.timeScale = 0;
-           // curGameMode.GetComponent<GameModeScript>().currentGameMode = 1;
-            endScreen.SetActive(true);
-            minigameScreen.SetActive(false);
-            endText.text = ("You Win! End Score: " + Score);
-        }
     }
- 
+
+    private void WinGame()
+    {
+        if (playerCurrentSkill < 21)
+        {
+            playerCurrentSkill=playerCurrentSkill + 5;
+            curGameMode.GetComponent<GameModeScript>().playerSkill = playerCurrentSkill;
+        }
+        Time.timeScale = 0;
+        curGameMode.GetComponent<GameModeScript>().currentGameMode = 1;
+        endScreen.SetActive(true);
+        minigameScreen.SetActive(false);
+        endText.text = ("You Win! New Skill Level: " + playerCurrentSkill);
+  
+    }
     public void OnEasyPressed()
     {
         curGameMode.GetComponent<GameModeScript>().OnEasyPressed();
@@ -230,9 +254,10 @@ public class MinigameManager : MonoBehaviour
 
     public void ButtonPressed(int value)
     {
-        Debug.Log("ayo");
         if (value == currentNumber)
         {
+            gameText.text = ("You Got It");
+
             if (currentNumber == firstNum)
             {
                 firstNumImage.sprite = correctSprite;
@@ -251,27 +276,80 @@ public class MinigameManager : MonoBehaviour
             else if (currentNumber == fourthNum)
             {
                 fourthNumImage.sprite = correctSprite;
+                WinGame();
             }
         }
         else
         {
-            if (Lives == 4)
+            int saveChance = Random.Range(0, 50);
+            if (saveChance > playerCurrentSkill)
             {
-                firstTryImage.sprite = wrongSprite;
+                if (gameMode == 1)
+                {
+                    if (Lives == 4)
+                    {
+                        firstTryImage.sprite = wrongSprite;
+                    }
+                    else if (Lives == 3)
+                    {
+                        secondTryImage.sprite = wrongSprite;
+                    }
+                    else if (Lives == 2)
+                    {
+                        thirdTryImage.sprite = wrongSprite;
+                    }
+                    else if (Lives == 1)
+                    {
+                        fourthTryImage.sprite = wrongSprite;
+                    }
+                }
+                else if (gameMode == 2)
+                {
+                    if (Lives == 3)
+                    {
+                        firstTryImage.sprite = wrongSprite;
+                    }
+                    else if (Lives == 2)
+                    {
+                        secondTryImage.sprite = wrongSprite;
+                    }
+                    else if (Lives == 1)
+                    {
+                        thirdTryImage.sprite = wrongSprite;
+                    }
+                }
+                else if (gameMode == 3)
+                {
+                    if (Lives == 2)
+                    {
+                        firstTryImage.sprite = wrongSprite;
+                    }
+                    else if (Lives == 1)
+                    {
+                        secondTryImage.sprite = wrongSprite;
+                    }
+                }
+                Lives--;
             }
-            else if (Lives == 3)
+            else
             {
-                secondTryImage.sprite = wrongSprite;
+                gameText.text = ("Saved by Skill Level!");
             }
-            else if (Lives == 2)
-            {
-                thirdTryImage.sprite = wrongSprite;
-            }
-            else if (Lives == 1)
-            {
-                fourthTryImage.sprite = wrongSprite;
-            }
-            Lives--;
+
         }
+
+        firstNumSet = false;
+        secondNumSet = false;
+        thirdNumSet = false;
+        fourthNumSet = false;
+        
+
+        for (int list = 0; list < buttonList.Count - 1; list++)
+        {
+            buttonList[list].Reset();
+        }
+
+        CheckForCode();
+
     }
 }

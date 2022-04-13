@@ -49,7 +49,8 @@ public class GameButton : MonoBehaviour
     }
     public void Reset()
     {
-        randomNumber = Random.Range(1, numOfTypes + 1);
+        randomNumber = Random.Range(0, 99);
+        isAnyNum = isFirstNum = isSecondNum = isThirdNum = isFourthNum = false;
         SetButtonNumber();
 
     }
