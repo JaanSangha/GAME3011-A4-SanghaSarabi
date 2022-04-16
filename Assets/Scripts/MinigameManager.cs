@@ -74,7 +74,7 @@ public class MinigameManager : MonoBehaviour
 
         if (curGameMode.GetComponent<GameModeScript>().currentGameMode == 1)
         {
-            timeLeft = 45;
+            timeLeft = 80;
             Lives = 4;
             difficultyText.text = ("Difficulty: Easy");
         }
@@ -87,7 +87,7 @@ public class MinigameManager : MonoBehaviour
         }
         else if (curGameMode.GetComponent<GameModeScript>().currentGameMode == 3)
         {
-            timeLeft = 80;
+            timeLeft = 45;
             Lives = 2;
             thirdTryImage.gameObject.SetActive(false);
             fourthTryImage.gameObject.SetActive(false);
@@ -284,6 +284,8 @@ public class MinigameManager : MonoBehaviour
             int saveChance = Random.Range(0, 50);
             if (saveChance > playerCurrentSkill)
             {
+                gameText.text = ("Wrong Number!");
+
                 if (gameMode == 1)
                 {
                     if (Lives == 4)

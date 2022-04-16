@@ -7858,7 +7858,7 @@ MonoBehaviour:
   gameButton: {fileID: 1737140710364804923, guid: ef0f7f3bb28dd2b428652ba3474a9545, type: 3}
   canvas: {fileID: 1580289866}
   startTransform: {fileID: 1178168474}
-  gridSize: 8
+  gridSize: 6
   buttonList: []
   gameMode: 1
   firstNum: 0
